@@ -89,6 +89,8 @@ void main()
 {
     uint index = gl_GlobalInvocationID.x;
     NodeInfo current = nodes_info[index];
+    if(current.RGBAColor==0) return;
+    
     ShiftPosition(current.Position);
     for(int i = current.ChildsStartIndex;i<current.ChildsEndIndex;i++){
         NodeInfo child = nodes_info[nodes_id[i]];
@@ -96,7 +98,6 @@ void main()
         if(child.RGBAColor!=0)
             DrawLine(child.Position,current.Position,child.RGBAColor);
     }
-    if(current.RGBAColor!=0)
     DrawCircle(current.Position,0.032,current.RGBAColor);
 }
 

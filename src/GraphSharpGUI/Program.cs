@@ -46,7 +46,7 @@ void TransformNodes(NodeBase[] nodes, out int[] nodesId, out NodeInfo[] nodesInf
     nodesInfo = _nodesInfo;
 }
 
-var nodes = NodeGraphFactory.CreateRandomConnected<Node>(1000,1,1).ToArray();
+var nodes = NodeGraphFactory.CreateRandomConnected<Node>(1000,1,3).ToArray();
 
 TransformNodes(nodes, out int[] nodesId, out NodeInfo[] nodesInfo,Color.FromArgb(0,0,0,0));
 
@@ -96,7 +96,7 @@ using var timer = new Timer(
     },
     null,
     1000,
-    50
+    200
 );
 
 window.Run();
