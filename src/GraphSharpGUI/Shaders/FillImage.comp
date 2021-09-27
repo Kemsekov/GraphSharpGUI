@@ -1,0 +1,22 @@
+#version 450
+
+layout(set = 0, binding = 1) uniform ScreenSizeBuffer
+{
+    float ScreenWidth;
+    float ScreenHeight;
+    vec2 Padding_;
+};
+
+layout(set = 0, binding = 0, rgba32f) uniform image2D Tex;
+
+layout(local_size_x = 16, local_size_y = 16, local_size_z = 1) in;
+
+void main()
+{
+    //nodesInfo index
+    uvec2 index = gl_GlobalInvocationID.xy;
+    if(index.x%32<2 && index.y%32<2)
+        imageStore(Tex,ivec2(index.x,index.y), vec4(1.0,1.0,1.0,1.0));
+    else
+        imageStore(Tex, ivec2(index.x,index.y), vec4(0.0,0.0,0.0,1.0));
+}

@@ -1,0 +1,102 @@
+#version 450
+
+struct NodeInfo
+{
+    int NodeId;
+    int ChildsEndIndex;
+    int ChildsStartIndex;
+    int RGBAColor;
+    vec2 Position;
+};
+
+layout(set = 0,binding = 4) uniform ShiftImage{
+    float _padding;
+    float shift_mult;
+    vec2 shift_pos;
+};
+
+layout(set=0, binding = 2) buffer NodesInfo{
+    NodeInfo nodes_info[];
+};
+
+layout(set = 0, binding = 3) buffer NodesId{
+    int nodes_id[];
+};
+
+layout(set = 0, binding = 1) uniform ScreenSizeBuffer
+{
+    float ScreenWidth;
+    float ScreenHeight;
+    vec2 Padding_;
+};
+
+layout(set = 0, binding = 0, rgba32f) uniform image2D Tex;
+
+layout(local_size_x = 1, local_size_y = 1, local_size_z = 1) in;
+
+void DrawLine(vec2 point1, vec2 point2, int color){
+
+    float r = float(color*8 % 256)/255.0;
+    float g = float((color>>8) % 256)/255.0;
+    float b = float((color>>16) % 256)/255.0;
+    
+    float k = (point1.y-point2.y)/(point1.x-point2.x);
+
+    int min_x = int(min(point1.x,point2.x)*ScreenWidth);
+    int max_x = int(max(point1.x,point2.x)*ScreenWidth);
+    int min_y = int(min(point1.y,point2.y)*ScreenHeight);
+    int max_y = int(max(point1.y,point2.y)*ScreenHeight);
+    int y = 0;
+    for(int x = min_x;x<max_x;x++){
+        if(k>0)
+            y = int(((k*float(x-min_x)/ScreenWidth)+float(min_y)/ScreenHeight)*ScreenHeight);
+        else
+            y = int(((k*float(x-min_x)/ScreenWidth)+float(max_y)/ScreenHeight)*ScreenHeight);
+        imageStore(Tex,ivec2(x,y),vec4(r,g,b,1.0));
+    }
+}
+
+void DrawCircle(vec2 point, float radius,int color){
+    int x_start_index = int(((point.x>radius ? point.x : radius)-radius)*ScreenWidth);
+    int y_start_index = int(((point.y>radius ? point.y : radius)-radius)*ScreenHeight);
+    int x_end_index = int((point.x+radius)*ScreenWidth);
+    int y_end_index = int((point.y+radius)*ScreenHeight);
+
+    float c_x = 0.0;
+    float c_y = 0.0;
+
+    float r = float(color*8 % 256)/255.0;
+    float g = float((color>>8) % 256)/255.0;
+    float b = float((color>>16) % 256)/255.0;
+
+    for(int x = x_start_index;x<x_end_index;x++)
+    for(int y = y_start_index;y<y_end_index;y++){
+        c_x = (float(x)/ScreenWidth-point.x);
+        c_y = (float(y)/ScreenHeight-point.y);
+        if((radius*radius-c_x*c_x)-c_y*c_y>=0.001){
+            imageStore(Tex, ivec2(x,y), vec4(r,g,b,1.0));
+        }
+    }
+}
+
+
+void ShiftPosition(inout vec2 pos){
+    pos+=shift_pos;
+    pos*=shift_mult;
+}
+
+void main()
+{
+    uint index = gl_GlobalInvocationID.x;
+    NodeInfo current = nodes_info[index];
+    ShiftPosition(current.Position);
+    for(int i = current.ChildsStartIndex;i<current.ChildsEndIndex;i++){
+        NodeInfo child = nodes_info[nodes_id[i]];
+        ShiftPosition(child.Position);
+        if(child.RGBAColor!=0)
+            DrawLine(child.Position,current.Position,child.RGBAColor);
+    }
+    if(current.RGBAColor!=0)
+    DrawCircle(current.Position,0.032,current.RGBAColor);
+}
+
