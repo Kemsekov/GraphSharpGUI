@@ -46,12 +46,28 @@ void DrawLine(vec2 point1, vec2 point2, int color){
     int max_x = int(max(point1.x,point2.x)*ScreenWidth);
     int min_y = int(min(point1.y,point2.y)*ScreenHeight);
     int max_y = int(max(point1.y,point2.y)*ScreenHeight);
-    int y = 0;
-    for(int x = min_x;x<max_x;x++){
+    int y = min_y;
+    int x = min_x;
+
+
+    
+    //better for horizontal
+    for(;x<max_x;x++){
         if(k>0)
             y = int(((k*float(x-min_x)/ScreenWidth)+float(min_y)/ScreenHeight)*ScreenHeight);
         else
             y = int(((k*float(x-min_x)/ScreenWidth)+float(max_y)/ScreenHeight)*ScreenHeight);
+        imageStore(Tex,ivec2(x,y),vec4(r,g,b,1.0));
+    }
+
+    //better for vertical
+    y = min_y;
+    x = min_x;
+    for(;y<max_y;y++){
+        if(k>0)
+            x=int((float(y-min_y)/k/ScreenHeight+float(min_x)/ScreenWidth)*ScreenWidth);
+        else
+            x=int((float(y-min_y)/k/ScreenHeight+float(max_x)/ScreenWidth)*ScreenWidth);
         imageStore(Tex,ivec2(x,y),vec4(r,g,b,1.0));
     }
 }

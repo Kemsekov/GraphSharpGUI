@@ -80,8 +80,9 @@ using var timer = new Timer(
         lock(g){
             for(int i = 0;i<nodesInfo.Length;i++){
                 if(nodesInfo[i].RGBAColor==Color.FromArgb(204,54,0,255).ToArgb()){
-                    nodesInfo[i].RGBAColor=Color.FromArgb(86,0,0,255).ToArgb();
+                    nodesInfo[i].RGBAColor=Color.FromArgb(255,190,90,255).ToArgb();
                 }
+                else
                 if(nodesInfo[i].RGBAColor==Color.FromArgb(255,175,0,255).ToArgb()){
                     nodesInfo[i].RGBAColor=Color.FromArgb(204,54,0,255).ToArgb();
                 }
@@ -96,7 +97,7 @@ using var timer = new Timer(
     },
     null,
     1000,
-    200
+    100
 );
 
 window.Run();
