@@ -22,6 +22,9 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using AutoPipeline;
 using GraphSharp;
+using GraphSharp.Graphs;
+using GraphSharp.Nodes;
+using GraphSharp.Visitors;
 using GraphSharpGUI;
 using SampleBase;
 
@@ -66,14 +69,14 @@ var drawTexture = new DrawTexture(create_texture,File.ReadAllBytes("Shaders/Vert
 Graph g = new Graph(nodes);
 
 Dictionary<int,int> repeats = new();
-ActionVesitor vesitor = new ActionVesitor(node=>{
+ActionVisitor visitor = new ActionVisitor(node=>{
         if(nodesInfo[node.Id].NodeId==node.Id){
             repeats[node.Id]+=1;
             if(repeats[node.Id]<3)
                 nodesInfo[node.Id].RGBAColor = Color.FromArgb(255,175,0,255).ToArgb();
         }
 });
-g.AddVesitor(vesitor);
+g.AddVisitor(visitor);
 
 using var timer = new Timer(
     s=>{

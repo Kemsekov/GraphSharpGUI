@@ -11,9 +11,9 @@
     <PackageReference Include="Veldrid.SPIRV" Version="1.0.14"/>
     <PackageReference Include="Veldrid.Utilities" Version="4.8.0"/>
     <PackageReference Include="SixLabors.ImageSharp" Version="1.0.3"/>
+    <PackageReference Include="Kemsekov.GraphSharp" Version="1.0.3"/>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="../GraphSharp/src/Graph.csproj"/>
     <ProjectReference Include="../veldrid-my-auto-pipeline/AutoPipeline/AutoPipeline.csproj"/>
   </ItemGroup>
 </Project>
